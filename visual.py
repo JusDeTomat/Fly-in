@@ -1,4 +1,5 @@
 import pyray as rl
+import backend.parcing as par
 
 class Ship:
     def __init__(self, model):
@@ -9,14 +10,7 @@ class Ship:
 
 class Visual:
     def __init__(self):
-        self.map = [
-            [0,0,1,1,2,0],
-            [2,0,0,3,0,1]
-            ]
-        self.link = [
-            ((2, 0), (0, 1)),
-            ((0, 1), (5, 1))
-        ]
+
         self.path = [
             ((2, 0), (0, 1)),
             ((0, 1), (5, 1))
@@ -27,46 +21,49 @@ class Visual:
         self.id_path = 0
         self.t = 0.005
 
-    def draw_map(self):
-        x = 0
-        y = 0
-        for line in self.map:
-            for element in line:
-                if element == 1:
-                    rl.draw_model_ex(
-                            model,
-                            rl.Vector3(x, 0, y),
-                            rl.Vector3(x, 90, y),
-                            self.angle,
-                            rl.Vector3(0.01, 0.01, 0.01),
-                            rl.WHITE
-                        )
-                if element == 2:
-                    rl.draw_model_ex(
-                            model2,
-                            rl.Vector3(x, 0, y),
-                            rl.Vector3(x, 90, y),
-                            self.angle,
-                            rl.Vector3(0.001, 0.001, 0.001),
-                            rl.WHITE
-                        )
-                if element == 3:
-                        rl.draw_model_ex(
-                            model3,
-                            rl.Vector3(x, 0, y),
-                            rl.Vector3(x, 90, y),
-                            self.angle,
-                            rl.Vector3(0.2, 0.2, 0.2),
-                            rl.WHITE
-                        )
-                x += 3
-            x = 0
-            y += 3
+    def draw_map(self, dico_info):
+        x = int(dico_info["start"]["x"])
+        y = int(dico_info["start"]["y"])
+        rl.draw_model_ex(
+                model,
+                rl.Vector3(x * 3, 0, y * 3),
+                rl.Vector3(0, 90, 0),
+                self.angle,
+                rl.Vector3(0.01, 0.01, 0.01),
+                rl.WHITE
+            )
+        x = int(dico_info["end"]["x"])
+        y = int(dico_info["end"]["y"])
+        rl.draw_model_ex(
+                model,
+                rl.Vector3(x * 3, 0, y * 3),
+                rl.Vector3(0, 90, 0),
+                self.angle,
+                rl.Vector3(0.01, 0.01, 0.01),
+                rl.WHITE
+            )
+        key_hub = dico["hub"].keys()
+        for element in key_hub:
+            print(element, dico_info["hub"][element])
+            x = int(dico_info["hub"][element]["x"])
+            y = int(dico_info["hub"][element]["y"])
+            rl.draw_model_ex(
+                    model,
+                    rl.Vector3(x * 3, 0, y * 3),
+                    rl.Vector3(0, 90, 0),
+                    self.angle,
+                    rl.Vector3(0.01, 0.01, 0.01),
+                    rl.WHITE
+                )
 
-    def draw_link(self):
-        for link in self.link:
-            x1,y1 = link[0]
-            x2,y2 = link[1]
+    def draw_link(self, dico_info):
+        link = dico_info["link"]
+        print(link)
+        for element in link:
+            x1 = int(dico_info["hub"][element['hub1']]["x"])
+            y1 = int(dico_info["hub"][element['hub1']]["y"])
+            x2 = int(dico_info["hub"][element['hub2']]["x"])
+            y2 = int(dico_info["hub"][element['hub2']]["y"])
             rl.draw_line_3d(rl.Vector3(x1 * 3, 0, y1 * 3), rl.Vector3(x2 * 3, 0, y2 * 3), rl.WHITE)
     
     def draw_moove_ship(self):
@@ -124,8 +121,9 @@ while not rl.window_should_close():
                     rl.WHITE
                 )
     rl.draw_sphere(rl.Vector3(95, -28, -95), 15, rl.LIGHTGRAY)
-    vis.draw_map()
-    vis.draw_link()
+    dico = par.read_file("backend/test.txt")
+    vis.draw_map(dico)
+    vis.draw_link(dico)
     vis.draw_moove_ship()
     vis.draw_moove_ship()
     vis.angle += 0.3
