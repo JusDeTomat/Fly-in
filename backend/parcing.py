@@ -21,80 +21,81 @@ def parcing(content):
         "hub" : {},
         "link" : []
     }
-    if len(lst) and "nb_drones:" not in lst[0]:
-        raise TypeError("The very firth line on the file need to be 'nb_drones: (int)'")
+    if not len(lst):
+        raise TypeError("The file is empty")
     try:
         for line in lst:
-            if len(line.split(':')) > 1:
-                key, value = line.split(": ")
-                if key == "nb_drones":
-                    dico["nb_drones"] = int(value)
-                
-                if key == "start_hub":
-                    mendatory, parm_add = value.split(' [')
-                    if len(mendatory.split(' ')) != 3:
-                        raise TypeError(f"{key} need 3 parm not {len(mendatory.split(' '))} is you want more parm do this [color=green ...]")
-                    mendatory_splited = mendatory.split(' ')
-                    name, x, y = mendatory_splited
-                    dico_start = {"name": name, "x": x, "y": y}
-                    dico_hub = {"x": x, "y": y}
-                    parm_add, _ = parm_add.split(']')
-                    parm = parm_add.split(' ')
-                    for element in parm:
-                        if element != '':
-                            parmkey, parmvalue = element.split('=')
-                            dico_start[parmkey] = parmvalue
-                    dico["start"] = dico_start
-                    dico["hub"][name] = dico_hub
-                
-                if key == "end_hub":
-                    mendatory, parm_add = value.split(' [')
-                    if len(mendatory.split(' ')) != 3:
-                        raise TypeError(f"{key} need 3 parm not {len(mendatory.split(' ')) - 2} is you want more parm do this [color=green ...]")
-                    mendatory_splited = mendatory.split(' ')
-                    name, x, y = mendatory_splited
-                    dico_end = {"name": name, "x": x, "y": y}
-                    dico_hub = {"x": x, "y": y}
-                    parm_add, _ = parm_add.split(']')
-                    parm = parm_add.split(' ')
-                    for element in parm:
-                        if element != '':
-                            parmkey, parmvalue = element.split('=')
-                            dico_end[parmkey] = parmvalue
-                    dico["end"] = dico_end
-                    dico["hub"][name] = dico_hub
-                
-                if key == "hub":
-                    mendatory, parm_add = value.split(' [')
-                    if len(mendatory.split(' ')) != 3:
-                        raise TypeError(f"{key} need 3 parm not {len(mendatory.split(' '))} is you want more parm do this [color=green ...]")
-                    mendatory_splited = mendatory.split(' ')
-                    name, x, y = mendatory_splited
-                    dico_hub = {"x": x, "y": y}
-                    parm_add, _ = parm_add.split(']')
-                    parm = parm_add.split(' ')
-                    for element in parm:
-                        if element != '':
-                            parmkey, parmvalue = element.split('=')
-                            dico_hub[parmkey] = parmvalue
-                    dico["hub"][name] = dico_hub
-                
-                if key == "connection":
-                    mendatory= value.split(' [')
-                    if len(mendatory[0].split(' ')) != 1:
-                        raise TypeError(f"{key} need 1 parm not {len(mendatory[0].split(' '))} is you want more parm do this [max_link_capacity=2 ...]")
-                    mendatory_splited = mendatory[0].split(' ')
-                    name = mendatory_splited
-                    name_hub1, name_hub2 = name[0].split('-')
-                    dico_link = {"hub1": name_hub1, "hub2": name_hub2}
-                    if len(mendatory)  == 2:
-                        parm_add, _ = mendatory[1].split(']')
+            if not '#' in line:
+                if len(line.split(':')) > 1:
+                    key, value = line.split(": ")
+                    if key == "nb_drones":
+                        dico["nb_drones"] = int(value)
+                    
+                    if key == "start_hub":
+                        mendatory, parm_add = value.split(' [')
+                        if len(mendatory.split(' ')) != 3:
+                            raise TypeError(f"{key} need 3 parm not {len(mendatory.split(' '))} is you want more parm do this [color=green ...]")
+                        mendatory_splited = mendatory.split(' ')
+                        name, x, y = mendatory_splited
+                        dico_start = {"name": name, "x": int(x), "y": int(y)}
+                        dico_hub = {"x": int(x), "y": int(y)}
+                        parm_add, _ = parm_add.split(']')
                         parm = parm_add.split(' ')
                         for element in parm:
                             if element != '':
                                 parmkey, parmvalue = element.split('=')
-                                dico_link[parmkey] = parmvalue
-                    dico["link"].append(dico_link)
+                                dico_start[parmkey] = parmvalue
+                        dico["start"] = dico_start
+                        dico["hub"][name] = dico_hub
+                    
+                    if key == "end_hub":
+                        mendatory, parm_add = value.split(' [')
+                        if len(mendatory.split(' ')) != 3:
+                            raise TypeError(f"{key} need 3 parm not {len(mendatory.split(' ')) - 2} is you want more parm do this [color=green ...]")
+                        mendatory_splited = mendatory.split(' ')
+                        name, x, y = mendatory_splited
+                        dico_end = {"name": name, "x": int(x), "y": int(y)}
+                        dico_hub = {"x": int(x), "y": int(y)}
+                        parm_add, _ = parm_add.split(']')
+                        parm = parm_add.split(' ')
+                        for element in parm:
+                            if element != '':
+                                parmkey, parmvalue = element.split('=')
+                                dico_end[parmkey] = parmvalue
+                        dico["end"] = dico_end
+                        dico["hub"][name] = dico_hub
+                    
+                    if key == "hub":
+                        mendatory, parm_add = value.split(' [')
+                        if len(mendatory.split(' ')) != 3:
+                            raise TypeError(f"{key} need 3 parm not {len(mendatory.split(' '))} is you want more parm do this [color=green ...]")
+                        mendatory_splited = mendatory.split(' ')
+                        name, x, y = mendatory_splited
+                        dico_hub = {"x": int(x), "y": int(y)}
+                        parm_add, _ = parm_add.split(']')
+                        parm = parm_add.split(' ')
+                        for element in parm:
+                            if element != '':
+                                parmkey, parmvalue = element.split('=')
+                                dico_hub[parmkey] = parmvalue
+                        dico["hub"][name] = dico_hub
+                    
+                    if key == "connection":
+                        mendatory= value.split(' [')
+                        if len(mendatory[0].split(' ')) != 1:
+                            raise TypeError(f"{key} need 1 parm not {len(mendatory[0].split(' '))} is you want more parm do this [max_link_capacity=2 ...]")
+                        mendatory_splited = mendatory[0].split(' ')
+                        name = mendatory_splited
+                        name_hub1, name_hub2 = name[0].split('-')
+                        dico_link = {"hub1": name_hub1, "hub2": name_hub2}
+                        if len(mendatory)  == 2:
+                            parm_add, _ = mendatory[1].split(']')
+                            parm = parm_add.split(' ')
+                            for element in parm:
+                                if element != '':
+                                    parmkey, parmvalue = element.split('=')
+                                    dico_link[parmkey] = parmvalue
+                        dico["link"].append(dico_link)
         return dico
     except TypeError as e:
         raise ValueError(e)
@@ -115,10 +116,6 @@ def check_link(dico):
             raise ValueError(f"The connection ({element}) can't exist because {element['hub1']} does not exist")
         else:
             raise ValueError(f"The connection ({element}) can't exist because {element['hub2']} does not exist")
-
-
-
-
 
 
 def main():
