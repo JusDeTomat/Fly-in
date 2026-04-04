@@ -1,11 +1,14 @@
 class Hub:
-    def __init__(self, name, x, y, zone):
+    def __init__(self, name, x, y, zone, max_drone):
         self.lst_link = []
         self.name = name
         self.visited = False
         self.x = x
         self.y = y
         self.zone = zone
+        self.nb_in = 0
+        self.max_in = max_drone
+        self.cost = 0
 
 class Map:
     def __init__(self, dico_info):
@@ -16,6 +19,8 @@ class Map:
         self.end_name = dico_info['end']['name']
         self.finish_solve = False
         self.lst_solve = []
+        self.lst_cost = []
+        self.lst_choose = []
 
     def add_all_hub(self):
         key_hub = self.dico["hub"].keys()
@@ -25,7 +30,9 @@ class Map:
                 name_hub,
                 self.dico['hub'][name_hub]['x'],
                 self.dico['hub'][name_hub]['y'],
-                self.dico['hub'][name_hub].get('zone', 'normal')
+                self.dico['hub'][name_hub].get('zone', 'normal'),
+                self.dico['hub'][name_hub].get('max_drones', 1)
+
             )
             self.lst_hub.append(hub)
         for hub in self.lst_hub:
@@ -41,29 +48,60 @@ class Map:
         for hub in self.lst_hub:
             if hub.name == self.start_name:
                 hub_start = hub
-        self.recursive_solve(hub_start)
-    
-    def recursive_solve(self, hub):
-        if hub.visited or self.finish_solve:
-            return
-        if hub.name == self.end_name:
-            self.finish_solve = True
-        hub.visited = True
-        self.lst_solve.append((hub.x, hub.y))
-        print(hub.name)
-        for link in hub.lst_link:
-            if link.zone == "priority":
-                self.recursive_solve(link)
-        for link in hub.lst_link:
-            self.recursive_solve(link)
-            
+        self.dijkstrar(hub_start,0)
+        hub_solve = self.lst_choose[-1][2]
+        hub_next = self.lst_choose[-1][1]
+        while hub_next.name != self.start_name:
+            for _, hn, hs in self.lst_choose:
+                if hub_next == hs:
+                    self.lst_solve.append((hub_solve.x,hub_solve.y))
+                    hub_solve = hs
+                    hub_next = hn
+        self.lst_solve.append((hub_solve.x,hub_solve.y))
+        self.lst_solve.append((hub_next.x,hub_next.y))
+        self.lst_solve = self.lst_solve[::-1]
+        print(self.lst_solve)
 
+
+
+    
+    def dijkstrar(self, hub, cost):
+        if hub.name == self.end_name:
+            return 
+        if not hub.visited:
+            for link in hub.lst_link:
+                link.cost = cost
+                if link.zone == "normal":
+                    link.cost += 1
+                    self.lst_cost.append((link.cost,hub,link))
+                if link.zone == "prioritie":
+                    link.cost += 0
+                    self.lst_cost.append((link.cost,hub,link))
+                if link.zone == "restricted":
+                    link.cost += 2
+                    self.lst_cost.append((link.cost,hub,link))
+        min_cost = self.lst_cost[0][0]
+        for i in range(len(self.lst_cost)):
+            if self.lst_cost[i][0] <= min_cost:
+                min_cost = self.lst_cost[i][0]
+                index_min = i
+        hub.visited = True
+        new_hub = self.lst_cost[index_min][2]
+        self.lst_choose.append((min_cost, self.lst_cost[index_min][1], new_hub))
+        for element,h,nh in self.lst_cost:
+            print(element,h.name ,nh.name)
+        print(f"new_hub : ({new_hub.name})")
+        print("=" * 30)
+        self.lst_cost.pop(index_min)
+        self.dijkstrar(new_hub, min_cost)
 
 
 def main(dico):
     maps = Map(dico)
     maps.solve()
-    print(maps.lst_solve)
+    for element in maps.lst_choose:
+        print(element)
+    # print(maps.lst_choose)
 
 main(
     {'nb_drones': 25, 
