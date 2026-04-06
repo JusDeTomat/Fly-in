@@ -1,5 +1,6 @@
 import pyray as rl
 import backend.parcing as par
+import backend.dijkstrar as dij
 import math
 
 class Ship:
@@ -7,18 +8,18 @@ class Ship:
         self.ship_id = id
         self.id_path = 1
         self.t = 0.005
-        self.model = rl.load_model('source/spaceship.glb')
-        self.position = rl.Vector3(0, 1.5 + 0.4 * self.ship_id, 0)
+        self.model = ship 
+        self.position = rl.Vector3(0, 1.5 + 0.2 * self.ship_id, 0)
         self.angle = 0
         self.end = False
 
 
 class Visual:
-    def __init__(self, dico_info):
+    def __init__(self, dico_info, solve):
 
+        print(solve)
         self.dico_info = dico_info
-        self.path = [[(0, 0), (1, 0), (1, 1), (2, 1), (6, 0), (6, -1), (12, -2), (13, -2), (14, -2), (15, 0), (16, 0), (17, 0), (18, 0), (19, 0), (20, 0), (21, 0)]]* 25
-        print(self.path)
+        self.path = solve
         self.angle = 0
         self.level_ves = 0
         self.lst_ship = []
@@ -29,6 +30,7 @@ class Visual:
     def add_ship(self):
         for i in range(self.dico_info['nb_drones']):
             self.lst_ship.append(Ship(i))
+        self.lst_ship
 
     def draw_map(self):
         x = int(self.dico_info["start"]["x"])
@@ -44,11 +46,11 @@ class Visual:
         x = int(self.dico_info["end"]["x"])
         y = int(self.dico_info["end"]["y"])
         rl.draw_model_ex(
-                        model,
+                        end,
                         rl.Vector3(x * 3, 0, y * 3),
                         rl.Vector3(0, 90, 0),
                         self.angle,
-                        rl.Vector3(0.01, 0.01, 0.01),
+                        rl.Vector3(0.001, 0.001, 0.001),
                         rl.WHITE
                     )
         key_hub = dico["hub"].keys()
@@ -109,7 +111,6 @@ class Visual:
         stop = 0
         end = 0
         for ship in self.lst_ship:
-            # print(ship.ship_id, self.stop, ship.t)
             if self.stop or ship.end:
                 rl.draw_model_ex(
                             ship.model,
@@ -146,6 +147,7 @@ class Visual:
                         ship.id_path += 1
                         stop = 1
                     else:
+                        ship.end = True
                         end = 1
         if end:
             self.end = True
@@ -168,13 +170,14 @@ camera = rl.Camera3D(
 
 rl.set_target_fps(60)
 dico = par.read_file("backend/test.txt")
-vis = Visual(dico)
 background = rl.load_model('source/black_hole.glb')
 start = rl.load_model("source/earth.glb")
+ship = rl.load_model('source/spaceship.glb')
 model = rl.load_model("source/neptune.glb")
 model2 = rl.load_model('source/saturn.glb')
 model3 = rl.load_model('source/moon.glb')
 model4 = rl.load_model('source/sun.glb')
+end = rl.load_model('source/base.glb')
 light = rl.load_model('source/light.glb')
 image = rl.load_image("source/skybox.jpg")
 texture = rl.load_texture("source/skybox.jpg")
@@ -183,6 +186,8 @@ cubemap = rl.load_texture_cubemap(image, rl.CUBEMAP_LAYOUT_AUTO_DETECT)
 mesh = rl.gen_mesh_sphere(1.0, 32, 100)
 sphere = rl.load_model_from_mesh(mesh)
 sphere.materials[0].maps[rl.MATERIAL_MAP_DIFFUSE].texture = texture
+maps = dij.Map(dico)
+vis = Visual(dico, maps.solve())
 
 while not rl.window_should_close():
     if rl.is_mouse_button_down(rl.MOUSE_LEFT_BUTTON) or rl.is_mouse_button_down(rl.MOUSE_RIGHT_BUTTON):
