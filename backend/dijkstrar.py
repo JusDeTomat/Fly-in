@@ -20,6 +20,7 @@ class Hub:
         self.cost = 0
         self.max_size = False
         self.nb_in = 0
+        self.come = 0
 
 class Map:
     def __init__(self, dico_info):
@@ -74,11 +75,10 @@ class Map:
         while self.finish_solve:
             for ship in self.lst_ship:
                 if ship.stuck:
-                    print(ship.id)
                     ship.hub_solve.nb_in += 1
                     if ship.hub_solve.max_in <= ship.hub_solve.nb_in:
-                        ship.hub_solve.max_size = True
-        
+                                ship.hub_solve.max_size = True
+
             for ship in self.lst_ship:
                 if not ship.stuck:
                     if ship.hub_next.name == self.end_name:
@@ -86,7 +86,11 @@ class Map:
                         ship.finish = True
                     if not ship.finish:
                         for _, hn, hs in self.lst_choose:
-                            if ship.hub_next == hs and not ship.hub_next.max_size and not hn.max_size:
+                            if ship.hub_next == hs and not hs.max_size and not (hn.come >= hn.max_in):
+                                for _, hna, hsa in self.lst_choose:
+                                    if hs == hsa and not hna.max_size and not hsa.max_size:
+                                        hs = hsa
+                                        hn = hna
                                 ship.hub_solve = hs
                                 ship.hub_next = hn
                                 ship.hub_solve.nb_in += 1
@@ -94,16 +98,17 @@ class Map:
                                     ship.stuck = True
                                 if ship.hub_solve.max_in <= ship.hub_solve.nb_in:
                                     ship.hub_solve.max_size = True
+                        if not ship.stuck:
+                            ship.hub_next.come += 1
                 else:
                     ship.stuck = False
-                print(ship.id, ship.hub_solve.name)
                 ship.lst_solve.append((ship.hub_solve.x, ship.hub_solve.y))
             for hub in self.lst_hub:
+                hub.come = 0
                 hub.nb_in = 0
                 hub.max_size = False
             i = 0
             for ship in self.lst_ship:
-                print(ship.finish)
                 if not ship.finish:
                     break
                 i += 1

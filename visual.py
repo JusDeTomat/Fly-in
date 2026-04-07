@@ -4,24 +4,24 @@ import backend.dijkstrar as dij
 import math
 
 class Ship:
-    def __init__(self,id):
+    def __init__(self,id, model):
         self.ship_id = id
         self.id_path = 1
         self.t = 0.005
-        self.model = ship 
-        self.position = rl.Vector3(0, 1.5 + 0.2 * self.ship_id, 0)
-        self.angle = 0
+        self.model = model
+        self.position = rl.Vector3(0, 1.5, 0)
+        self.angle = 90
         self.end = False
 
 
 class Visual:
-    def __init__(self, dico_info, solve):
+    def __init__(self, dico_info, solve, model):
 
-        print(solve)
         self.dico_info = dico_info
         self.path = solve
         self.angle = 0
         self.level_ves = 0
+        self.model = model
         self.lst_ship = []
         self.add_ship()
         self.speed = 0.005
@@ -29,40 +29,40 @@ class Visual:
     
     def add_ship(self):
         for i in range(self.dico_info['nb_drones']):
-            self.lst_ship.append(Ship(i))
+            self.lst_ship.append(Ship(i ,self.model["ship"]))
         self.lst_ship
 
     def draw_map(self):
         x = int(self.dico_info["start"]["x"])
         y = int(self.dico_info["start"]["y"])
         rl.draw_model_ex(
-                        start,
+                        self.model["start"],
                         rl.Vector3(x * 3, 0, y * 3),
-                        rl.Vector3(0, 90, 0),
-                        self.angle,
-                        rl.Vector3(0.5, 0.5, 0.5),
+                        rl.Vector3(0, 1, 0),
+                        -90,
+                        rl.Vector3(0.001, 0.001, 0.001),
                         rl.WHITE
                     )
         x = int(self.dico_info["end"]["x"])
         y = int(self.dico_info["end"]["y"])
         rl.draw_model_ex(
-                        end,
+                        self.model["end"],
                         rl.Vector3(x * 3, 0, y * 3),
                         rl.Vector3(0, 90, 0),
-                        self.angle,
-                        rl.Vector3(0.001, 0.001, 0.001),
+                        0,
+                        rl.Vector3(0.03, 0.03, 0.03),
                         rl.WHITE
                     )
-        key_hub = dico["hub"].keys()
+        key_hub = self.dico_info["hub"].keys()
         for element in key_hub:
             x = int(self.dico_info["hub"][element]["x"])
             y = int(self.dico_info["hub"][element]["y"])
             mode = self.dico_info["hub"][element].get("zone", "normal")
             color = self.dico_info['hub'][element].get('color', 'WHITE').upper()
-            rl.draw_sphere(rl.Vector3(x * 3, 1, y * 3), 0.3, rl.WHITE)
+            rl.draw_sphere(rl.Vector3(x * 3, 1, y * 3), 0.3, self.convert_color(color))
             if (mode == "restricted"):
                 rl.draw_model_ex(
-                        model,
+                        self.model["neptune"],
                         rl.Vector3(x * 3, 0, y * 3),
                         rl.Vector3(0, 90, 0),
                         self.angle,
@@ -71,7 +71,7 @@ class Visual:
                     )
             elif (mode == "blocked"):
                 rl.draw_model_ex(
-                        model4,
+                        self.model["sun"],
                         rl.Vector3(x * 3, 0, y * 3),
                         rl.Vector3(0, 90, 0),
                         self.angle,
@@ -80,7 +80,7 @@ class Visual:
                     )
             elif (mode == "priority"):
                 rl.draw_model_ex(
-                        model3,
+                        self.model["moon"],
                         rl.Vector3(x * 3, 0, y * 3),
                         rl.Vector3(0, 90, 0),
                         self.angle,
@@ -89,7 +89,7 @@ class Visual:
                     )
             elif element != self.dico_info["start"]["name"] and element != self.dico_info["end"]["name"]:
                 rl.draw_model_ex(
-                        model2,
+                        self.model["saturn"],
                         rl.Vector3(x * 3, 0, y * 3),
                         rl.Vector3(0, 90, 20),
                         self.angle,
@@ -107,11 +107,44 @@ class Visual:
             y2 = int(self.dico_info["hub"][element['hub2']]["y"])
             rl.draw_line_3d(rl.Vector3(x1 * 3, 0, y1 * 3), rl.Vector3(x2 * 3, 0, y2 * 3), rl.WHITE)
     
+    def convert_color(self, color):
+        match color:
+            case "RED":
+                return rl.RED
+            case "ORANGE":
+                return rl.ORANGE
+            case "WHITE":
+                return rl.WHITE
+            case "CRIMSON":
+                return (220, 20, 60)
+            case "VIOLET":
+                return rl.VIOLET
+            case "DARKRED":
+                return (139, 0 , 0)
+            case "BLACK":
+                return rl.BLACK
+            case "GOLD":
+                return rl.GOLD
+            case "MAROON":
+                return rl.MAROON
+            case "BROWN":
+                return rl.BROWN
+            case "PURPLE":
+                return rl.PURPLE
+            case "YELLOW":
+                return rl.YELLOW
+            case "BLUE":
+                return rl.BLUE
+        return rl.WHITE
+
     def draw_moove_ship(self):
         stop = 0
         end = 0
         for ship in self.lst_ship:
-            if self.stop or ship.end:
+            if ship.end:
+                pass
+            elif self.stop:
+                ship.angle = 90
                 rl.draw_model_ex(
                             ship.model,
                             ship.position,
@@ -156,76 +189,77 @@ class Visual:
 
 
 
+def main_visual():
+    rl.init_window(1800, 1000, "Fly-In")
 
-rl.init_window(1800, 1000, "Fly-In")
 
+    camera = rl.Camera3D(
+        rl.Vector3(0.0, 2.0, 6.0),
+        rl.Vector3(0.0, 1.0, 0.0),
+        rl.Vector3(0.0, 1.0, 0.0),
+        60.0,
+        rl.CAMERA_PERSPECTIVE
+    )
 
-camera = rl.Camera3D(
-    rl.Vector3(0.0, 2.0, 6.0),
-    rl.Vector3(0.0, 1.0, 0.0),
-    rl.Vector3(0.0, 1.0, 0.0),
-    60.0,
-    rl.CAMERA_PERSPECTIVE
-)
+    rl.set_target_fps(60)
+    dico = par.read_file("backend/test.txt")
+    model = {}
+    background = rl.load_model('source/black_hole.glb')
+    model["start"] = rl.load_model("source/start.glb")
+    model["ship"] = rl.load_model('source/spaceship.glb')
+    model["neptune"] = rl.load_model("source/neptune.glb")
+    model["saturn"] = rl.load_model('source/saturn.glb')
+    model["moon"] = rl.load_model('source/moon.glb')
+    model["sun"] = rl.load_model('source/sun.glb')
+    model["end"] = rl.load_model('source/end.glb')
+    image = rl.load_image("source/skybox.jpg")
+    texture = rl.load_texture("source/skybox.jpg")
+    shader = rl.load_shader("skybox.vs", "skybox.fs")
+    cubemap = rl.load_texture_cubemap(image, rl.CUBEMAP_LAYOUT_AUTO_DETECT)
+    mesh = rl.gen_mesh_sphere(1.0, 32, 100)
+    sphere = rl.load_model_from_mesh(mesh)
+    sphere.materials[0].maps[rl.MATERIAL_MAP_DIFFUSE].texture = texture
+    maps = dij.Map(dico)
+    vis = Visual(dico, maps.solve(), model)
 
-rl.set_target_fps(60)
-dico = par.read_file("backend/test.txt")
-background = rl.load_model('source/black_hole.glb')
-start = rl.load_model("source/earth.glb")
-ship = rl.load_model('source/spaceship.glb')
-model = rl.load_model("source/neptune.glb")
-model2 = rl.load_model('source/saturn.glb')
-model3 = rl.load_model('source/moon.glb')
-model4 = rl.load_model('source/sun.glb')
-end = rl.load_model('source/base.glb')
-light = rl.load_model('source/light.glb')
-image = rl.load_image("source/skybox.jpg")
-texture = rl.load_texture("source/skybox.jpg")
-shader = rl.load_shader("skybox.vs", "skybox.fs")
-cubemap = rl.load_texture_cubemap(image, rl.CUBEMAP_LAYOUT_AUTO_DETECT)
-mesh = rl.gen_mesh_sphere(1.0, 32, 100)
-sphere = rl.load_model_from_mesh(mesh)
-sphere.materials[0].maps[rl.MATERIAL_MAP_DIFFUSE].texture = texture
-maps = dij.Map(dico)
-vis = Visual(dico, maps.solve())
+    while not rl.window_should_close():
+        if rl.is_mouse_button_down(rl.MOUSE_LEFT_BUTTON) or rl.is_mouse_button_down(rl.MOUSE_RIGHT_BUTTON):
+            rl.update_camera(camera, rl.CAMERA_FREE)
+        else:
+            if rl.is_key_pressed(rl.GLFW_KEY_SPACE):
+                if vis.stop:
+                    vis.stop = False
+        if rl.is_key_down(rl.KEY_UP):
+            vis.speed += 0.005
+        if rl.is_key_down(rl.KEY_DOWN):
+            vis.speed -= 0.005
+        rl.begin_drawing()
+        rl.clear_background(rl.BLACK)
+        rl.begin_mode_3d(camera)
+        rl.draw_model_ex(
+                        sphere, 
+                        rl.Vector3(0, 0, 0), 
+                        rl.Vector3(1, 0, 0),
+                        -90,
+                        rl.Vector3(-500, -500, -500),
+                        rl.WHITE
+                        )
+        rl.draw_model_ex(
+                        background,
+                        rl.Vector3(100, -30, -100),
+                        rl.Vector3(0, 70, 0),
+                        vis.angle * 2,
+                        rl.Vector3(0.1, 0.1, 0.1),
+                        rl.WHITE
+                    )
+        vis.draw_map()
+        vis.draw_link()
+        vis.draw_moove_ship()
+        vis.angle += 0.3
 
-while not rl.window_should_close():
-    if rl.is_mouse_button_down(rl.MOUSE_LEFT_BUTTON) or rl.is_mouse_button_down(rl.MOUSE_RIGHT_BUTTON):
-        rl.update_camera(camera, rl.CAMERA_FREE)
-    else:
-        if rl.is_key_pressed(rl.GLFW_KEY_SPACE):
-            if vis.stop:
-                vis.stop = False
-    if rl.is_key_down(rl.KEY_UP):
-        vis.speed += 0.005
-    if rl.is_key_down(rl.KEY_DOWN):
-        vis.speed -= 0.005
-    rl.begin_drawing()
-    rl.clear_background(rl.BLACK)
-    rl.begin_mode_3d(camera)
-    rl.draw_model_ex(
-                     sphere, 
-                     rl.Vector3(0, 0, 0), 
-                     rl.Vector3(1, 0, 0),
-                     -90,
-                     rl.Vector3(-500, -500, -500),
-                     rl.WHITE
-                     )
-    rl.draw_model_ex(
-                    background,
-                    rl.Vector3(100, -30, -100),
-                    rl.Vector3(0, 70, 0),
-                    vis.angle * 2,
-                    rl.Vector3(0.1, 0.1, 0.1),
-                    rl.WHITE
-                )
-    vis.draw_map()
-    vis.draw_link()
-    vis.draw_moove_ship()
-    vis.angle += 0.3
+        rl.end_mode_3d()
+        rl.end_drawing()
 
-    rl.end_mode_3d()
-    rl.end_drawing()
+    rl.close_window()
 
-rl.close_window()
-print
+main_visual()
