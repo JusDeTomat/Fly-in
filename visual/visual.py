@@ -1,8 +1,9 @@
 import pyray as rl
 import math
 
+
 class Ship:
-    def __init__(self,id, model):
+    def __init__(self, id, model):
         self.ship_id = id
         self.id_path = 1
         self.t = 0.005
@@ -24,10 +25,10 @@ class Visual:
         self.add_ship()
         self.speed = 0.005
         self.stop = True
-    
+
     def add_ship(self):
         for i in range(self.dico_info['nb_drones']):
-            self.lst_ship.append(Ship(i ,self.model["ship"]))
+            self.lst_ship.append(Ship(i, self.model["ship"]))
         self.lst_ship
 
     def draw_map(self):
@@ -56,8 +57,10 @@ class Visual:
             x = int(self.dico_info["hub"][element]["x"])
             y = int(self.dico_info["hub"][element]["y"])
             mode = self.dico_info["hub"][element].get("zone", "normal")
-            color = self.dico_info['hub'][element].get('color', 'WHITE').upper()
-            rl.draw_sphere(rl.Vector3(x * 3, 1, y * 3), 0.3, self.convert_color(color))
+            color = self.dico_info['hub'][element].get('color',
+                                                       'WHITE').upper()
+            rl.draw_sphere(rl.Vector3(x * 3, 1, y * 3), 0.3,
+                           self.convert_color(color))
             if (mode == "restricted"):
                 rl.draw_model_ex(
                         self.model["neptune"],
@@ -85,7 +88,8 @@ class Visual:
                         rl.Vector3(0.01, 0.01, 0.01),
                         rl.WHITE
                     )
-            elif element != self.dico_info["start"]["name"] and element != self.dico_info["end"]["name"]:
+            elif (element != self.dico_info["start"]["name"]
+                  and element != self.dico_info["end"]["name"]):
                 rl.draw_model_ex(
                         self.model["saturn"],
                         rl.Vector3(x * 3, 0, y * 3),
@@ -97,14 +101,14 @@ class Visual:
 
     def draw_link(self):
         link = self.dico_info["link"]
-        
         for element in link:
             x1 = int(self.dico_info["hub"][element['hub1']]["x"])
             y1 = int(self.dico_info["hub"][element['hub1']]["y"])
             x2 = int(self.dico_info["hub"][element['hub2']]["x"])
             y2 = int(self.dico_info["hub"][element['hub2']]["y"])
-            rl.draw_line_3d(rl.Vector3(x1 * 3, 0, y1 * 3), rl.Vector3(x2 * 3, 0, y2 * 3), rl.WHITE)
-    
+            rl.draw_line_3d(rl.Vector3(x1 * 3, 0, y1 * 3),
+                            rl.Vector3(x2 * 3, 0, y2 * 3), rl.WHITE)
+
     def convert_color(self, color):
         match color:
             case "RED":
@@ -118,7 +122,7 @@ class Visual:
             case "VIOLET":
                 return rl.VIOLET
             case "DARKRED":
-                return (139, 0 , 0, 255)
+                return (139, 0, 0, 255)
             case "BLACK":
                 return rl.BLACK
             case "GOLD":
@@ -147,7 +151,8 @@ class Visual:
                 return rl.MAGENTA
             case "RAINBOW":
                 return (225, 255, 250, 255)
-        print(color)
+        raise ValueError(f"The color {color} is incorrect")
+
     def draw_moove_ship(self):
         stop = 0
         end = 0
@@ -199,10 +204,8 @@ class Visual:
             self.stop = True
 
 
-
-def main_visual(dico ,solve):
+def main_visual(dico, solve):
     rl.init_window(1800, 1000, "Fly-In")
-
 
     camera = rl.Camera3D(
         rl.Vector3(0.0, 2.0, 6.0),
@@ -224,8 +227,6 @@ def main_visual(dico ,solve):
     model["end"] = rl.load_model('visual/source/end.glb')
     image = rl.load_image("visual/source/skybox.jpg")
     texture = rl.load_texture("visual/source/skybox.jpg")
-    shader = rl.load_shader("skybox.vs", "skybox.fs")
-    cubemap = rl.load_texture_cubemap(image, rl.CUBEMAP_LAYOUT_AUTO_DETECT)
     mesh = rl.gen_mesh_sphere(1.0, 32, 1000)
     sphere = rl.load_model_from_mesh(mesh)
     sphere.materials[0].maps[rl.MATERIAL_MAP_DIFFUSE].texture = texture
