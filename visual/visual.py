@@ -1,6 +1,4 @@
 import pyray as rl
-import backend.parcing as par
-import backend.dijkstrar as dij
 import math
 
 class Ship:
@@ -116,11 +114,11 @@ class Visual:
             case "WHITE":
                 return rl.WHITE
             case "CRIMSON":
-                return (220, 20, 60)
+                return (220, 20, 60, 255)
             case "VIOLET":
                 return rl.VIOLET
             case "DARKRED":
-                return (139, 0 , 0)
+                return (139, 0 , 0, 255)
             case "BLACK":
                 return rl.BLACK
             case "GOLD":
@@ -135,8 +133,21 @@ class Visual:
                 return rl.YELLOW
             case "BLUE":
                 return rl.BLUE
-        return rl.WHITE
-
+            case "GREEN":
+                return rl.GREEN
+            case "DARKGREEN":
+                return rl.DARKGREEN
+            case "DARKPURPLE":
+                return rl.DARKPURPLE
+            case "CYAN":
+                return (43, 255, 255, 255)
+            case "LIME":
+                return rl.LIME
+            case "MAGENTA":
+                return rl.MAGENTA
+            case "RAINBOW":
+                return (225, 255, 250, 255)
+        print(color)
     def draw_moove_ship(self):
         stop = 0
         end = 0
@@ -189,7 +200,7 @@ class Visual:
 
 
 
-def main_visual():
+def main_visual(dico ,solve):
     rl.init_window(1800, 1000, "Fly-In")
 
 
@@ -202,25 +213,23 @@ def main_visual():
     )
 
     rl.set_target_fps(60)
-    dico = par.read_file("backend/test.txt")
     model = {}
-    background = rl.load_model('source/black_hole.glb')
-    model["start"] = rl.load_model("source/start.glb")
-    model["ship"] = rl.load_model('source/spaceship.glb')
-    model["neptune"] = rl.load_model("source/neptune.glb")
-    model["saturn"] = rl.load_model('source/saturn.glb')
-    model["moon"] = rl.load_model('source/moon.glb')
-    model["sun"] = rl.load_model('source/sun.glb')
-    model["end"] = rl.load_model('source/end.glb')
-    image = rl.load_image("source/skybox.jpg")
-    texture = rl.load_texture("source/skybox.jpg")
+    background = rl.load_model('visual/source/black_hole.glb')
+    model["start"] = rl.load_model("visual/source/start.glb")
+    model["ship"] = rl.load_model('visual/source/spaceship.glb')
+    model["neptune"] = rl.load_model("visual/source/neptune.glb")
+    model["saturn"] = rl.load_model('visual/source/saturn.glb')
+    model["moon"] = rl.load_model('visual/source/moon.glb')
+    model["sun"] = rl.load_model('visual/source/sun.glb')
+    model["end"] = rl.load_model('visual/source/end.glb')
+    image = rl.load_image("visual/source/skybox.jpg")
+    texture = rl.load_texture("visual/source/skybox.jpg")
     shader = rl.load_shader("skybox.vs", "skybox.fs")
     cubemap = rl.load_texture_cubemap(image, rl.CUBEMAP_LAYOUT_AUTO_DETECT)
-    mesh = rl.gen_mesh_sphere(1.0, 32, 100)
+    mesh = rl.gen_mesh_sphere(1.0, 32, 1000)
     sphere = rl.load_model_from_mesh(mesh)
     sphere.materials[0].maps[rl.MATERIAL_MAP_DIFFUSE].texture = texture
-    maps = dij.Map(dico)
-    vis = Visual(dico, maps.solve(), model)
+    vis = Visual(dico, solve, model)
 
     while not rl.window_should_close():
         if rl.is_mouse_button_down(rl.MOUSE_LEFT_BUTTON) or rl.is_mouse_button_down(rl.MOUSE_RIGHT_BUTTON):
@@ -262,4 +271,4 @@ def main_visual():
 
     rl.close_window()
 
-main_visual()
+

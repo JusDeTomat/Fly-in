@@ -3,6 +3,7 @@ def read_file(filename: str):
         with open(filename, "r") as file:
             content = file.read()
             dico = parcing(content)
+            test_dico(dico)
             check_link(dico)
             return dico
     except FileNotFoundError:
@@ -16,8 +17,8 @@ def parcing(content):
     lst = content.split('\n')
     dico = {
         "nb_drones" : 0,
-        "start": [],
-        "end" : [],
+        "start": {},
+        "end" : {},
         "hub" : {},
         "link" : []
     }
@@ -32,41 +33,52 @@ def parcing(content):
                         dico["nb_drones"] = int(value)
                     
                     if key == "start_hub":
-                        mendatory, parm_add = value.split(' [')
-                        if len(mendatory.split(' ')) != 3:
-                            raise TypeError(f"{key} need 3 parm not {len(mendatory.split(' '))} is you want more parm do this [color=green ...]")
-                        mendatory_splited = mendatory.split(' ')
-                        name, x, y = mendatory_splited
-                        dico_start = {"name": name, "x": int(x), "y": int(y)}
-                        dico_hub = {"x": int(x), "y": int(y)}
-                        parm_add, _ = parm_add.split(']')
-                        parm = parm_add.split(' ')
-                        for element in parm:
-                            if element != '':
-                                parmkey, parmvalue = element.split('=')
-                                dico_start[parmkey] = parmvalue
-                        dico["start"] = dico_start
-                        dico["hub"][name] = dico_hub
+                        if dico['start'] == {}:
+                            mendatory, parm_add = value.split(' [')
+                            mendatory = ' '.join(mendatory.split())
+                            if len(mendatory.split(' ')) != 3:
+                                raise TypeError(f"{key} need 3 parm not {len(mendatory.split(' '))} is you want more parm do this [color=green ...]")
+                            mendatory_splited = mendatory.split(' ')
+                            name, x, y = mendatory_splited
+                            dico_start = {"name": name, "x": int(x), "y": int(y)}
+                            dico_hub = {"x": int(x), "y": int(y)}
+                            parm_add, _ = parm_add.split(']')
+                            parm = parm_add.split(' ')
+                            for element in parm:
+                                if element != '':
+                                    parmkey, parmvalue = element.split('=')
+                                    dico_start[parmkey] = parmvalue
+                                    dico_hub[parmkey] = parmvalue
+                            dico["start"] = dico_start
+                            dico["hub"][name] = dico_hub
+                        else:
+                            raise TypeError("The programe need only 1 start_hub")
                     
                     if key == "end_hub":
-                        mendatory, parm_add = value.split(' [')
-                        if len(mendatory.split(' ')) != 3:
-                            raise TypeError(f"{key} need 3 parm not {len(mendatory.split(' ')) - 2} is you want more parm do this [color=green ...]")
-                        mendatory_splited = mendatory.split(' ')
-                        name, x, y = mendatory_splited
-                        dico_end = {"name": name, "x": int(x), "y": int(y)}
-                        dico_hub = {"x": int(x), "y": int(y)}
-                        parm_add, _ = parm_add.split(']')
-                        parm = parm_add.split(' ')
-                        for element in parm:
-                            if element != '':
-                                parmkey, parmvalue = element.split('=')
-                                dico_end[parmkey] = parmvalue
-                        dico["end"] = dico_end
-                        dico["hub"][name] = dico_hub
+                        if dico['end'] == {}:
+                            mendatory, parm_add = value.split(' [')
+                            mendatory = ' '.join(mendatory.split())
+                            if len(mendatory.split(' ')) != 3:
+                                raise TypeError(f"{key} need 3 parm not {len(mendatory.split(' '))} is you want more parm do this [color=green ...]")
+                            mendatory_splited = mendatory.split(' ')
+                            name, x, y = mendatory_splited
+                            dico_end = {"name": name, "x": int(x), "y": int(y)}
+                            dico_hub = {"x": int(x), "y": int(y)}
+                            parm_add, _ = parm_add.split(']')
+                            parm = parm_add.split(' ')
+                            for element in parm:
+                                if element != '':
+                                    parmkey, parmvalue = element.split('=')
+                                    dico_end[parmkey] = parmvalue
+                                    dico_hub[parmkey] = parmvalue
+                            dico["end"] = dico_end
+                            dico["hub"][name] = dico_hub
+                        else:
+                            raise TypeError("The programe need only 1 end_hub")
                     
                     if key == "hub":
                         mendatory, parm_add = value.split(' [')
+                        mendatory = ' '.join(mendatory.split())
                         if len(mendatory.split(' ')) != 3:
                             raise TypeError(f"{key} need 3 parm not {len(mendatory.split(' '))} is you want more parm do this [color=green ...]")
                         mendatory_splited = mendatory.split(' ')
@@ -100,8 +112,7 @@ def parcing(content):
     except TypeError as e:
         raise ValueError(e)
     except Exception as e:
-        raise ValueError(f"This line '{line}' is not good\n"
-                         f"[DEV] : {e}")
+        raise ValueError(f"This line '{line}' is not good")
     
 def check_link(dico):
     try:
@@ -117,12 +128,13 @@ def check_link(dico):
         else:
             raise ValueError(f"The connection ({element}) can't exist because {element['hub2']} does not exist")
 
+def test_dico(dico):
+    if dico['start'] == {}:
+        raise ValueError('The progrqme need start_hub')
+    if dico['end'] == {}:
+        raise ValueError('The progrqme need end_hub')
+    if int(dico['start'].get('max_drones', dico['nb_drones'])) < dico['nb_drones']:
+        raise ValueError('Start max_drone need to be bigger or egal')
+    if int(dico['end'].get('max_drones', dico['nb_drones'])) < dico['nb_drones']:
+        raise ValueError('Start max_drone need to be bigger or egal')
 
-def main():
-    try:
-        print(read_file("test.txt"))
-    except ValueError as e:
-        print(f"[ERROR] : {e}")
-    
-if __name__ == "__main__":
-    main()
