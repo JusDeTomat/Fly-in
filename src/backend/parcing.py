@@ -1,4 +1,7 @@
-def read_file(filename: str):
+from typing import Dict, Any
+
+
+def read_file(filename: str) -> Dict[str, Any]:
     try:
         with open(filename, "r") as file:
             content = file.read()
@@ -14,9 +17,9 @@ def read_file(filename: str):
         raise ValueError(e)
 
 
-def parcing(content):
+def parcing(content: str) -> Dict[str, Any]:
     lst = content.split('\n')
-    dico = {
+    dico: Dict[str, Any] = {
         "nb_drones": 0,
         "start": {},
         "end": {},
@@ -48,11 +51,16 @@ def parcing(content):
                                                 " is you want more parm do "
                                                 "this [color=green ...]")
                             mendatory_splited = mendatory.split(' ')
-                            name, x, y = mendatory_splited
-                            dico_start = {"name": name,
-                                          "x": int(x),
-                                          "y": int(y)}
-                            dico_hub = {"x": int(x), "y": int(y)}
+                            name_start, x_str, y_str = mendatory_splited
+                            x_start = int(x_str)
+                            y_start = int(y_str)
+                            dico_start: Dict[str, Any] = {
+                                "name": name_start,
+                                "x": x_start,
+                                "y": y_start
+                            }
+                            dico_hub: Dict[str, Any] = {"x": x_start,
+                                                        "y": y_start}
                             if not no_parm:
                                 parm_add, _ = parm_add.split(']')
                                 parm = parm_add.split(' ')
@@ -62,7 +70,7 @@ def parcing(content):
                                         dico_start[parmkey] = parmvalue
                                         dico_hub[parmkey] = parmvalue
                             dico["start"] = dico_start
-                            dico["hub"][name] = dico_hub
+                            dico["hub"][name_start] = dico_hub
                         else:
                             raise TypeError("The programe need only"
                                             " 1 start_hub")
@@ -82,9 +90,16 @@ def parcing(content):
                                                 " is you want more parm do"
                                                 "this [color=green ...]")
                             mendatory_splited = mendatory.split(' ')
-                            name, x, y = mendatory_splited
-                            dico_end = {"name": name, "x": int(x), "y": int(y)}
-                            dico_hub = {"x": int(x), "y": int(y)}
+                            name_end, x_str, y_str = mendatory_splited
+                            x_end = int(x_str)
+                            y_end = int(y_str)
+                            dico_end: Dict[str, Any] = {
+                                "name": name_end,
+                                "x": x_end,
+                                "y": y_end
+                            }
+                            dico_hub_end: Dict[str, Any] = {"x": x_end,
+                                                            "y": y_end}
                             if not no_parm:
                                 parm_add, _ = parm_add.split(']')
                                 parm = parm_add.split(' ')
@@ -92,9 +107,9 @@ def parcing(content):
                                     if element != '':
                                         parmkey, parmvalue = element.split('=')
                                         dico_end[parmkey] = parmvalue
-                                        dico_hub[parmkey] = parmvalue
+                                        dico_hub_end[parmkey] = parmvalue
                             dico["end"] = dico_end
-                            dico["hub"][name] = dico_hub
+                            dico["hub"][name_end] = dico_hub_end
                         else:
                             raise TypeError("The programe need only 1 end_hub")
 
@@ -112,30 +127,34 @@ def parcing(content):
                                             " you want more parm do "
                                             "this [color=green ...]")
                         mendatory_splited = mendatory.split(' ')
-                        name, x, y = mendatory_splited
-                        dico_hub = {"x": int(x), "y": int(y)}
+                        name_hub, x_str, y_str = mendatory_splited
+                        x_hub = int(x_str)
+                        y_hub = int(y_str)
+                        dico_hub_hub: Dict[str, Any] = {"x": x_hub, "y": y_hub}
                         if not no_parm:
                             parm_add, _ = parm_add.split(']')
                             parm = parm_add.split(' ')
                             for element in parm:
                                 if element != '':
                                     parmkey, parmvalue = element.split('=')
-                                    dico_hub[parmkey] = parmvalue
-                            if name in dico['hub'].keys():
+                                    dico_hub_hub[parmkey] = parmvalue
+                            if name_hub in dico['hub'].keys():
                                 raise TypeError("you can't have 2 "
                                                 "hub whit same name")
-                        dico["hub"][name] = dico_hub
+                        dico["hub"][name_hub] = dico_hub_hub
 
                     if key == "connection":
-                        mendatory = value.split(' [')
-                        if len(mendatory[0].split(' ')) != 1:
+                        mendatory_conn = value.split(' [')
+                        if len(mendatory_conn[0].split(' ')) != 1:
                             raise TypeError(f"{key} need 1 parm not "
-                                            f"{len(mendatory[0].split(' '))}"
+                                            f"{
+                                            len(mendatory_conn[0].split(' '))
+                                                }"
                                             " is you want more parm do "
                                             "this [max_link_capacity=2 ...]")
-                        mendatory_splited = mendatory[0].split(' ')
-                        name = mendatory_splited
-                        name_hub1, name_hub2 = name[0].split('-')
+                        mendatory_splited = mendatory_conn[0].split(' ')
+                        name = mendatory_splited[0]
+                        name_hub1, name_hub2 = name.split('-')
                         dico_link = {"hub1": name_hub1, "hub2": name_hub2}
                         if len(mendatory) == 2:
                             parm_add, _ = mendatory[1].split(']')
@@ -153,7 +172,7 @@ def parcing(content):
                          f"[DEV] :{e}")
 
 
-def check_link(dico):
+def check_link(dico: Dict[str, Any]) -> None:
     try:
         p = 0
         link = dico["link"]
@@ -170,7 +189,7 @@ def check_link(dico):
                              f" {element['hub2']} does not exist")
 
 
-def test_dico(dico):
+def test_dico(dico: Dict[str, Any]) -> None:
     if dico['start'] == {}:
         raise ValueError('The progrqme need start_hub')
     if dico['end'] == {}:

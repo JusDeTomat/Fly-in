@@ -1,8 +1,8 @@
 import sys
-import visual.visual as vis
-import backend.dijkstrar as dij
-import backend.parcing as par
-import backend.output as out
+import src.visual.visual as vis
+import src.backend.dijkstrar as dij
+import src.backend.parcing as par
+import src.backend.output as out
 
 
 def fly_in():

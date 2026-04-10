@@ -1,20 +1,24 @@
+from typing import Any, Dict, List, Tuple
+
+
 class Ship_solve:
-    def __init__(self, id):
+    def __init__(self, id: int) -> None:
         self.id = id
-        self.hub_solve = 0
-        self.hub_next = 0
-        self.lst_solve = []
+        self.hub_solve: Any = 0
+        self.hub_next: Any = 0
+        self.lst_solve: List[Tuple[float, float]] = []
         self.finish = False
         self.int_finish = 0
         self.stuck = False
-        self.lst_output = []
+        self.lst_output: List[Any] = []
         self.x = 0
         self.y = 0
 
 
 class Hub:
-    def __init__(self, name, x, y, zone, max_drone):
-        self.lst_link = []
+    def __init__(self, name: str, x: int,
+                 y: int, zone: str, max_drone: int) -> None:
+        self.lst_link: List[Any] = []
         self.name = name
         self.visited = False
         self.x = x
@@ -29,7 +33,7 @@ class Hub:
 
 
 class Link:
-    def __init__(self, hub1, hub2, max_in):
+    def __init__(self, hub1: Any, hub2: Any, max_in: int) -> None:
         self.hub1 = hub1
         self.hub2 = hub2
         self.max_in = max_in
@@ -40,21 +44,21 @@ class Link:
 
 
 class Map:
-    def __init__(self, dico_info):
+    def __init__(self, dico_info: Dict[str, Any]) -> None:
         self.dico = dico_info
-        self.lst_hub = []
+        self.lst_hub: List[Hub] = []
         self.add_all_hub()
-        self.lst_ship = []
+        self.lst_ship: List[Ship_solve] = []
         self.add_ship(self.dico['nb_drones'])
         self.start_name = dico_info['start']['name']
         self.end_name = dico_info['end']['name']
         self.finish_solve = False
-        self.lst_solve = []
-        self.lst_cost = []
-        self.lst_choose = []
-        self.lst_output = []
+        self.lst_solve: List[List[Tuple[float, float]]] = []
+        self.lst_cost: List[Tuple[float, Any]] = []
+        self.lst_choose: List[Tuple[float, Link]] = []
+        self.lst_output: List[List[Any]] = []
 
-    def add_all_hub(self):
+    def add_all_hub(self) -> None:
         key_hub = self.dico["hub"].keys()
         link = self.dico["link"]
         for name_hub in key_hub:
@@ -75,18 +79,18 @@ class Map:
                         if hub2.name == element['hub1']:
                             hub.lst_link.append(Link(hub, hub2, max_size))
 
-    def add_ship(self, nb_drones):
+    def add_ship(self, nb_drones: int) -> None:
         for i in range(nb_drones):
             self.lst_ship.append(Ship_solve(i + 1))
 
-    def solve(self):
+    def solve(self) -> List[List[Tuple[float, float]]]:
         try:
             self.finish_solve = True
             for hub in self.lst_hub:
                 if hub.name == self.end_name:
                     hub_start = hub
                 hub.visited = False
-            self.dijkstrar(hub_start, 0)
+            self.dijkstrar(hub_start, 0.0)
             for ship in self.lst_ship:
                 for cost, link in self.lst_choose:
                     hs = link.hub2
@@ -184,7 +188,7 @@ class Map:
         except IndexError:
             raise ValueError("No path found")
 
-    def dijkstrar(self, hub, cost):
+    def dijkstrar(self, hub: Any, cost: float) -> None:
         while hub.name != self.start_name:
             if not hub.visited:
                 for link in hub.lst_link:

@@ -1,4 +1,7 @@
-def write_output(filename, lst_output):
+from typing import List, Any
+
+
+def write_output(filename: str, lst_output: List[List[Any]]) -> None:
     try:
         check_filename(filename)
         with open(filename, "w") as file:
@@ -11,7 +14,7 @@ def write_output(filename, lst_output):
         raise ValueError(e)
 
 
-def check_filename(filename):
+def check_filename(filename: str) -> None:
     filesplited = filename.split('.')
     if filesplited[-1] == "py":
         raise ValueError("You can't write in python files")
