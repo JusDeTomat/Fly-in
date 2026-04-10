@@ -16,7 +16,7 @@ install: $(VENV)
 	$(V_PIP) install $(DEPENDENCIES)
 
 run: install
-	$(V_PYTHON) Fly-in.py input.txt output.txt
+	$(V_PYTHON) Fly-in.py $(ARGS)
 
 clean:
 	rm -rf $(VENV) build_venv

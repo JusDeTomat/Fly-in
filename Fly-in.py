@@ -9,7 +9,7 @@ def fly_in():
     if len(sys.argv) != 3:
         print("[ERROR]: you need to use 'python3 Fly-in.py "
               "input.txt output.txt")
-        sys.exit(1)
+        sys.exit(0)
     try:
         dico = par.read_file(sys.argv[1])
         maps = dij.Map(dico)
