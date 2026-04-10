@@ -1,6 +1,7 @@
 from typing import Dict, Any, List, Tuple
 import pyray as rl
 import math
+from src.enum import Model
 
 
 class Ship:
@@ -26,7 +27,7 @@ class Visual:
         self.model: Dict[str, Any] = model
         self.lst_ship: List[Ship] = []
         self.add_ship()
-        self.speed: float = 0.005
+        self.speed: float = 0.01
         self.stop: bool = True
 
     def add_ship(self) -> None:
@@ -209,6 +210,7 @@ class Visual:
 
 def main_visual(dico: Dict[str, Any],
                 solve: List[List[Tuple[float, float]]]) -> None:
+    rl.set_trace_log_level(7)
     rl.init_window(1800, 1000, "Fly-In")
 
     camera = rl.Camera3D(
@@ -221,15 +223,15 @@ def main_visual(dico: Dict[str, Any],
 
     rl.set_target_fps(60)
     model = {}
-    background = rl.load_model('src/visual/source/black_hole.glb')
-    model["start"] = rl.load_model("src/visual/source/start.glb")
-    model["ship"] = rl.load_model('src/visual/source/spaceship.glb')
-    model["neptune"] = rl.load_model("src/visual/source/neptune.glb")
-    model["saturn"] = rl.load_model('src/visual/source/saturn.glb')
-    model["moon"] = rl.load_model('src/visual/source/moon.glb')
-    model["sun"] = rl.load_model('src/visual/source/sun.glb')
-    model["end"] = rl.load_model('src/visual/source/end.glb')
-    texture = rl.load_texture("src/visual/source/skybox.jpg")
+    background = rl.load_model(Model.BLACK_HOLE.value)
+    model["start"] = rl.load_model(Model.START.value)
+    model["ship"] = rl.load_model(Model.SHIP.value)
+    model["neptune"] = rl.load_model(Model.NEPTUNE.value)
+    model["saturn"] = rl.load_model(Model.SATURN.value)
+    model["moon"] = rl.load_model(Model.MOON.value)
+    model["sun"] = rl.load_model(Model.SUN.value)
+    model["end"] = rl.load_model(Model.END.value)
+    texture = rl.load_texture(Model.SKYBOX.value)
     mesh = rl.gen_mesh_sphere(1.0, 32, 1000)
     sphere = rl.load_model_from_mesh(mesh)
     sphere.materials[0].maps[
@@ -245,9 +247,15 @@ def main_visual(dico: Dict[str, Any],
                 if vis.stop:
                     vis.stop = False
         if rl.is_key_down(rl.KeyboardKey.KEY_UP):
-            vis.speed += 0.005
+            if vis.speed < 1:
+                vis.speed += 0.01
         if rl.is_key_down(rl.KeyboardKey.KEY_DOWN):
-            vis.speed -= 0.005
+            if vis.speed > 0.01:
+                vis.speed -= 0.01
+        if rl.is_key_pressed(rl.KeyboardKey.KEY_R):
+            for ship in vis.lst_ship:
+                if ship.id_path > 1:
+                    ship.id_path -= 1
         rl.begin_drawing()
         rl.clear_background((0, 0, 0, 255))
         rl.begin_mode_3d(camera)

@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Tuple
+from src.enum import Cost
 
 
 class Ship_solve:
@@ -194,13 +195,13 @@ class Map:
                 for link in hub.lst_link:
                     link.hub1.cost = cost
                     if link.hub2.zone == "priority" and link.hub2.max_in > 0:
-                        link.hub1.cost += 0.9
+                        link.hub1.cost += Cost.PRIORITY.value - 0.1
                         self.lst_cost.append((link.hub1.cost, link))
                     if link.hub2.zone == "normal" and link.hub2.max_in > 0:
-                        link.hub1.cost += 1
+                        link.hub1.cost += Cost.NORMAL.value
                         self.lst_cost.append((link.hub1.cost, link))
                     if link.hub2.zone == "restricted" and link.hub2.max_in > 0:
-                        link.hub1.cost += 2.5
+                        link.hub1.cost += Cost.RESTRICTED.value
                         self.lst_cost.append((link.hub1.cost, link))
             min_cost = self.lst_cost[0][0]
             for i in range(len(self.lst_cost)):
