@@ -51,11 +51,15 @@ def parcing(content: str) -> Dict[str, Any]:
     if not len(lst):
         raise TypeError("The file is empty")
     try:
+        first = True
         for line in lst:
             if '#' not in line:
                 if len(line.split(':')) > 1:
                     key, value = line.split(": ")
                     if key == "nb_drones":
+                        if not first:
+                            raise TypeError("nb_drones need to be "
+                                            "the first parmeter")
                         if (int(value) <= 0):
                             raise TypeError("nb_drones need to be > 0 ")
                         dico["nb_drones"] = int(value)
@@ -197,6 +201,9 @@ def parcing(content: str) -> Dict[str, Any]:
                                     parmkey, parmvalue = element.split('=')
                                     dico_link[parmkey] = parmvalue
                         dico["link"].append(dico_link)
+                    first = False
+        if dico['nb_drones'] == 0:
+            raise TypeError("You need a parameter for nb_drones")
         return dico
     except TypeError as e:
         raise ValueError(e)
