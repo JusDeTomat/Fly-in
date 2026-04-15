@@ -137,6 +137,15 @@ def parcing(content: str) -> Dict[str, Any]:
                             for element in parm:
                                 if element != '':
                                     parmkey, parmvalue = element.split('=')
+                                    if (parmkey == "zone"
+                                        and parmvalue not in [
+                                            "normal",
+                                            "priority",
+                                            "restricted",
+                                            "blocked"
+                                            ]):
+                                        raise TypeError(f"{parmvalue} is not a"
+                                                        " good zone name")
                                     dico_hub_hub[parmkey] = parmvalue
                             if name_hub in dico['hub'].keys():
                                 raise TypeError("you can't have 2 "
