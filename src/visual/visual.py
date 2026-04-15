@@ -1,7 +1,7 @@
 from typing import Dict, Any, List, Tuple
 import pyray as rl
 import math
-from src.enum import Model
+from src.enums import Model
 
 
 class Ship:
@@ -10,7 +10,7 @@ class Ship:
         self.id_path: int = 1
         self.t: float = 0.005
         self.model: Any = model
-        self.position: Any = rl.Vector3(0, 1.5, 0)
+        self.position: Any = rl.Vector3(0, 1.5 + self.ship_id * 0.3, 0)
         self.angle: float = 90.0
         self.end: bool = False
 

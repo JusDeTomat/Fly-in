@@ -199,4 +199,4 @@ def test_dico(dico: Dict[str, Any]) -> None:
         raise ValueError('Start max_drone need to be bigger or egal')
     if int(dico['end'].get('max_drones',
                            dico['nb_drones'])) < dico['nb_drones']:
-        raise ValueError('Start max_drone need to be bigger or egal')
+        raise ValueError('End max_drone need to be bigger or egal')

@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Tuple
-from src.enum import Cost
+from src.enums import Cost
 
 
 class Ship_solve:
@@ -140,7 +140,6 @@ class Map:
                                     ship.hub_solve = hs
                                     ship.hub_next = hn
                                     play = 1
-                                    ship.hub_solve.nb_in += 1
                                     if ship.hub_solve.zone == "restricted":
                                         link.nb_in += 1
                                         ship.stuck = True
