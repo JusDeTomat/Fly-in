@@ -2,6 +2,15 @@ from typing import List, Any
 
 
 def write_output(filename: str, lst_output: List[List[Any]]) -> None:
+    """Write the output to the specified file.
+
+    Args:
+        filename (str): Name of the output file.
+        lst_output: List of output lists for each ship.
+
+    Raises:
+        ValueError: If file cannot be written or checked.
+    """
     try:
         check_filename(filename)
         with open(filename, "w") as file:
@@ -15,6 +24,14 @@ def write_output(filename: str, lst_output: List[List[Any]]) -> None:
 
 
 def check_filename(filename: str) -> None:
+    """Check if the filename is valid for writing.
+
+    Args:
+        filename (str): Filename to check.
+
+    Raises:
+        ValueError: If filename is invalid or file cannot be accessed.
+    """
     filesplited = filename.split('.')
     if filesplited[-1] == "py":
         raise ValueError("You can't write in python files")

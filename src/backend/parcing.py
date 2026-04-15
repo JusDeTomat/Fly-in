@@ -2,6 +2,17 @@ from typing import Dict, Any
 
 
 def read_file(filename: str) -> Dict[str, Any]:
+    """Read and parse the input file.
+
+    Args:
+        filename (str): Path to the input file.
+
+    Returns:
+        Parsed dictionary with map information.
+
+    Raises:
+        ValueError: If file cannot be read or parsed.
+    """
     try:
         with open(filename, "r") as file:
             content = file.read()
@@ -18,6 +29,17 @@ def read_file(filename: str) -> Dict[str, Any]:
 
 
 def parcing(content: str) -> Dict[str, Any]:
+    """Parse the content of the input file into a dictionary.
+
+    Args:
+        content (str): Raw content of the file.
+
+    Returns:
+        Dictionary with parsed map data.
+
+    Raises:
+        ValueError: If parsing fails.
+    """
     lst = content.split('\n')
     dico: Dict[str, Any] = {
         "nb_drones": 0,
@@ -34,6 +56,8 @@ def parcing(content: str) -> Dict[str, Any]:
                 if len(line.split(':')) > 1:
                     key, value = line.split(": ")
                     if key == "nb_drones":
+                        if (int(value) <= 0):
+                            raise TypeError("nb_drones need to be > 0 ")
                         dico["nb_drones"] = int(value)
 
                     if key == "start_hub":
@@ -176,12 +200,19 @@ def parcing(content: str) -> Dict[str, Any]:
         return dico
     except TypeError as e:
         raise ValueError(e)
-    except Exception as e:
-        raise ValueError(f"This line '{line}' is not good\n"
-                         f"[DEV] :{e}")
+    except Exception:
+        raise ValueError(f"This line '{line}' is not good")
 
 
 def check_link(dico: Dict[str, Any]) -> None:
+    """Check that all links reference existing hubs.
+
+    Args:
+        dico: Parsed dictionary.
+
+    Raises:
+        ValueError: If a link references a non-existent hub.
+    """
     try:
         p = 0
         link = dico["link"]
@@ -199,6 +230,14 @@ def check_link(dico: Dict[str, Any]) -> None:
 
 
 def test_dico(dico: Dict[str, Any]) -> None:
+    """Validate the parsed dictionary for required elements.
+
+    Args:
+        dico: Parsed dictionary.
+
+    Raises:
+        ValueError: If required elements are missing or invalid.
+    """
     if dico['start'] == {}:
         raise ValueError('The progrqme need start_hub')
     if dico['end'] == {}:

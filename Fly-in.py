@@ -6,6 +6,12 @@ import src.backend.output as out
 
 
 def fly_in():
+    """Main function to run the Fly-In program.
+
+    Parses command line arguments, reads input file, solves the map,
+    writes output, and starts the visual simulation.
+    Exits with error if arguments are invalid or parsing fails.
+    """
     if len(sys.argv) != 3:
         print("[ERROR]: you need to use 'python3 Fly-in.py "
               "input.txt output.txt")
