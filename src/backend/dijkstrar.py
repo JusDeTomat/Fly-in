@@ -201,10 +201,11 @@ class Map:
                             for cost, link in self.lst_choose:
                                 hs = link.hub2
                                 hn = link.hub1
+                                new_link = link
                                 min_cost = cost
                                 if (ship.hub_next == hs
                                    and not hs.max_size
-                                   and not link.max_size
+                                   and not new_link.max_size
                                    and not (hn.come >= hn.max_in)
                                    and play == 0):
                                     if not (hn.max_size):
@@ -214,20 +215,22 @@ class Map:
                                             if (hs == hsa
                                                and not hna.max_size
                                                and not hsa.max_size
+                                               and not links.max_size
                                                and costa <= min_cost):
                                                 hs = hsa
                                                 hn = hna
                                                 min_cost = costa
+                                                new_link = links
                                     ship.x = (ship.hub_solve.x + hs.x) / 2
                                     ship.y = (ship.hub_solve.y + hs.y) / 2
                                     ship.hub_solve = hs
                                     ship.hub_next = hn
                                     play = 1
-                                    link.nb_in += 1
+                                    new_link.nb_in += 1
                                     if not ship.stuck:
                                         ship.hub_solve.nb_in += 1
-                                    if link.nb_in > link.max_in:
-                                        link.max_size = True
+                                    if new_link.nb_in >= new_link.max_in:
+                                        new_link.max_size = True
                                     if ship.hub_solve.zone == "restricted":
                                         ship.stuck = True
                                     if (ship.hub_solve.max_in <=
@@ -248,13 +251,13 @@ class Map:
                     else:
                         ship.lst_output.append(None)
                 for hub in self.lst_hub:
-                    for link in hub.lst_link:
-                        link.nb_in = 0
-                        link.max_size = False
                     hub.come = 0
                     hub.nb_in = 0
                     if hub.max_in != 0:
                         hub.max_size = False
+                for link in self.lst_link:
+                        link.nb_in = 0
+                        link.max_size = False
                 i = 0
                 for ship in self.lst_ship:
                     if not ship.finish:
@@ -269,8 +272,7 @@ class Map:
 
             return self.lst_solve
         except IndexError as e:
-            raise ValueError("No path found\n"
-                             f"[DEV]: {e}")
+            raise ValueError("No path found")
 
     def dijkstrar(self, hub: Any, cost: float) -> None:
         """Run the Dijkstra algorithm from the given hub.

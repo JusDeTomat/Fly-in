@@ -193,8 +193,8 @@ def parcing(content: str) -> Dict[str, Any]:
                         name = mendatory_splited[0]
                         name_hub1, name_hub2 = name.split('-')
                         dico_link = {"hub1": name_hub1, "hub2": name_hub2}
-                        if len(mendatory) == 2:
-                            parm_add, _ = mendatory[1].split(']')
+                        if len(mendatory_conn) == 2:
+                            parm_add, _ = mendatory_conn[1].split(']')
                             parm = parm_add.split(' ')
                             for element in parm:
                                 if element != '':
