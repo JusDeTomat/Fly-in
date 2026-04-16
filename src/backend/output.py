@@ -33,8 +33,8 @@ def check_filename(filename: str) -> None:
         ValueError: If filename is invalid or file cannot be accessed.
     """
     filesplited = filename.split('.')
-    if filesplited[-1] == "py":
-        raise ValueError("You can't write in python files")
+    if filesplited[-1] != "txt":
+        raise ValueError("You can write only in txt files")
     try:
         with open(filename, "w") as _:
             pass
