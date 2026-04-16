@@ -90,7 +90,7 @@ class Map:
         self.start_name = dico_info['start']['name']
         self.end_name = dico_info['end']['name']
         self.lst_hub: List[Hub] = []
-        self.lst_link = []
+        self.lst_link: List[Link] = []
         self.add_all_hub()
         self.lst_ship: List[Ship_solve] = []
         self.add_ship(self.dico['nb_drones'])
@@ -256,8 +256,8 @@ class Map:
                     if hub.max_in != 0:
                         hub.max_size = False
                 for link in self.lst_link:
-                        link.nb_in = 0
-                        link.max_size = False
+                    link.nb_in = 0
+                    link.max_size = False
                 i = 0
                 for ship in self.lst_ship:
                     if not ship.finish:
@@ -271,7 +271,7 @@ class Map:
                 self.lst_output.append(ship.lst_output)
 
             return self.lst_solve
-        except IndexError as e:
+        except IndexError:
             raise ValueError("No path found")
 
     def dijkstrar(self, hub: Any, cost: float) -> None:
