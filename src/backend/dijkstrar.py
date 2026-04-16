@@ -90,6 +90,7 @@ class Map:
         self.start_name = dico_info['start']['name']
         self.end_name = dico_info['end']['name']
         self.lst_hub: List[Hub] = []
+        self.lst_link = []
         self.add_all_hub()
         self.lst_ship: List[Ship_solve] = []
         self.add_ship(self.dico['nb_drones'])
@@ -130,7 +131,21 @@ class Map:
                     max_size = int(element.get("max_link_capacity", 1))
                     for hub2 in self.lst_hub:
                         if hub2.name == element['hub1']:
-                            hub.lst_link.append(Link(hub, hub2, max_size))
+                            link_in = False
+                            for links in self.lst_link:
+                                if hub == links.hub1 and hub2 == links.hub2:
+                                    link_in = True
+                            if not link_in:
+                                self.lst_link.append(Link(hub, hub2, max_size))
+        for hub in self.lst_hub:
+            for element in link:
+                if element['hub2'] == hub.name:
+                    max_size = int(element.get("max_link_capacity", 1))
+                    for hub2 in self.lst_hub:
+                        if hub2.name == element['hub1']:
+                            for links in self.lst_link:
+                                if hub == links.hub1 and hub2 == links.hub2:
+                                    hub.lst_link.append(links)
 
     def add_ship(self, nb_drones: int) -> None:
         """Add the specified number of ships to the map.
@@ -208,13 +223,13 @@ class Map:
                                     ship.hub_solve = hs
                                     ship.hub_next = hn
                                     play = 1
+                                    link.nb_in += 1
                                     if not ship.stuck:
                                         ship.hub_solve.nb_in += 1
-                                    if ship.hub_solve.zone == "restricted":
-                                        link.nb_in += 1
-                                        ship.stuck = True
-                                    if link.nb_in >= link.max_in:
+                                    if link.nb_in > link.max_in:
                                         link.max_size = True
+                                    if ship.hub_solve.zone == "restricted":
+                                        ship.stuck = True
                                     if (ship.hub_solve.max_in <=
                                        ship.hub_solve.nb_in):
                                         ship.hub_solve.max_size = True
@@ -253,8 +268,9 @@ class Map:
                 self.lst_output.append(ship.lst_output)
 
             return self.lst_solve
-        except IndexError:
-            raise ValueError("No path found")
+        except IndexError as e:
+            raise ValueError("No path found\n"
+                             f"[DEV]: {e}")
 
     def dijkstrar(self, hub: Any, cost: float) -> None:
         """Run the Dijkstra algorithm from the given hub.

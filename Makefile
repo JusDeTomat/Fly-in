@@ -18,6 +18,9 @@ install: $(VENV)
 run: install
 	$(V_PYTHON) Fly-in.py $(ARGS)
 
+debug: install
+	$(PYTHON) -m pdb Fly-in.py
+
 clean:
 	rm -rf $(VENV) build_venv
 	find . -type d -name "__pycache__" -exec rm -rf {} +
