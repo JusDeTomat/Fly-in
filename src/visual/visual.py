@@ -184,7 +184,7 @@ class Visual:
                 return rl.MAGENTA
             case "RAINBOW":
                 return (225, 255, 250, 255)
-        raise ValueError(f"The color {color} is incorrect")
+        return rl.WHITE
 
     def draw_moove_ship(self) -> None:
         """Draw and update the positions of moving ships."""
@@ -297,7 +297,7 @@ def main_visual(
            or rl.is_mouse_button_down(rl.MouseButton.MOUSE_BUTTON_RIGHT)):
             rl.update_camera(camera, rl.CameraMode.CAMERA_FREE)
 
-        if rl.is_key_pressed(rl.KeyboardKey.KEY_SPACE):
+        elif rl.is_key_pressed(rl.KeyboardKey.KEY_SPACE):
             if vis.stop:
                 vis.stop = False
 

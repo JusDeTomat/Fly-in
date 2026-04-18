@@ -1,6 +1,6 @@
 import sys
 import src.visual.visual as vis
-import src.backend.dijkstrar as dij
+import src.backend.dijkstra as dij
 import src.backend.parcing as par
 import src.backend.output as out
 

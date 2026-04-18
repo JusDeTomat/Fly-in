@@ -128,7 +128,7 @@ class Map:
         for hub in self.lst_hub:
             for element in link:
                 if element['hub2'] == hub.name:
-                    max_size = int(element.get("max_link_capacity", 1))
+                    max_size = int(element.get("max_size", 1))
                     for hub2 in self.lst_hub:
                         if hub2.name == element['hub1']:
                             link_in = False
@@ -140,7 +140,7 @@ class Map:
         for hub in self.lst_hub:
             for element in link:
                 if element['hub2'] == hub.name:
-                    max_size = int(element.get("max_link_capacity", 1))
+                    max_size = int(element.get("max_size", 1))
                     for hub2 in self.lst_hub:
                         if hub2.name == element['hub1']:
                             for links in self.lst_link:
@@ -174,7 +174,7 @@ class Map:
                 if hub.name == self.end_name:
                     hub_start = hub
                 hub.visited = False
-            self.dijkstrar(hub_start, 0.0)
+            self.dijkstra(hub_start, 0.0)
             for ship in self.lst_ship:
                 for cost, link in self.lst_choose:
                     hs = link.hub2
@@ -274,7 +274,7 @@ class Map:
         except IndexError:
             raise ValueError("No path found")
 
-    def dijkstrar(self, hub: Any, cost: float) -> None:
+    def dijkstra(self, hub: Any, cost: float) -> None:
         """Run the Dijkstra algorithm from the given hub.
 
         Args:
@@ -285,13 +285,16 @@ class Map:
             if not hub.visited:
                 for link in hub.lst_link:
                     link.hub1.cost = cost
-                    if link.hub2.zone == "priority" and link.hub2.max_in > 0:
+                    if (link.hub2.zone == "priority" and link.hub2.max_in > 0 
+                       and link.max_in > 0):
                         link.hub1.cost += Cost.PRIORITY.value - 0.1
                         self.lst_cost.append((link.hub1.cost, link))
-                    if link.hub2.zone == "normal" and link.hub2.max_in > 0:
+                    if (link.hub2.zone == "normal" and link.hub2.max_in > 0 
+                        and link.max_in > 0):
                         link.hub1.cost += Cost.NORMAL.value
                         self.lst_cost.append((link.hub1.cost, link))
-                    if link.hub2.zone == "restricted" and link.hub2.max_in > 0:
+                    if (link.hub2.zone == "restricted" and link.hub2.max_in > 0 
+                        and link.max_in > 0):
                         link.hub1.cost += Cost.RESTRICTED.value
                         self.lst_cost.append((link.hub1.cost, link))
             min_cost = self.lst_cost[0][0]

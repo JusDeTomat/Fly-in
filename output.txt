@@ -1,0 +1,5 @@
+D1-junction D2-junction D3-start 
+D1-path_b D2-path_a D3-junction 
+D1-path_b D2-path_a D3-path_a 
+D1-goal D2-goal D3-path_a 
+D3-goal 
