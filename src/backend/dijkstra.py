@@ -285,16 +285,16 @@ class Map:
             if not hub.visited:
                 for link in hub.lst_link:
                     link.hub1.cost = cost
-                    if (link.hub2.zone == "priority" and link.hub2.max_in > 0 
+                    if (link.hub2.zone == "priority" and link.hub2.max_in > 0
                        and link.max_in > 0):
                         link.hub1.cost += Cost.PRIORITY.value - 0.1
                         self.lst_cost.append((link.hub1.cost, link))
-                    if (link.hub2.zone == "normal" and link.hub2.max_in > 0 
-                        and link.max_in > 0):
+                    if (link.hub2.zone == "normal" and link.hub2.max_in > 0
+                       and link.max_in > 0):
                         link.hub1.cost += Cost.NORMAL.value
                         self.lst_cost.append((link.hub1.cost, link))
-                    if (link.hub2.zone == "restricted" and link.hub2.max_in > 0 
-                        and link.max_in > 0):
+                    if (link.hub2.zone == "restricted" and link.hub2.max_in > 0
+                       and link.max_in > 0):
                         link.hub1.cost += Cost.RESTRICTED.value
                         self.lst_cost.append((link.hub1.cost, link))
             min_cost = self.lst_cost[0][0]
