@@ -247,7 +247,9 @@ class Map:
                                                ship.hub_solve.y))
                     else:
                         ship.lst_solve.append((ship.x, ship.y))
-                    if ship.int_finish <= 1 and old_hn != ship.hub_next and old_hs != ship.hub_solve:
+                    if (ship.int_finish <= 1
+                       and old_hn != ship.hub_next
+                       and old_hs != ship.hub_solve):
                         ship.lst_output.append(f"D{ship.id}-"
                                                f"{ship.hub_solve.name}")
                     else:
