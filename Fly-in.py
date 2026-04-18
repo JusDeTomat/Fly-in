@@ -1,7 +1,7 @@
 import sys
 import src.visual.visual as vis
 import src.backend.dijkstra as dij
-import src.backend.parcing as par
+import src.backend.parsing as par
 import src.backend.output as out
 
 

@@ -69,17 +69,17 @@ def parcing(content: str) -> Dict[str, Any]:
                     if dico['start'] == {}:
                         no_parm = False
                         try:
-                            mendatory, parm_add = value.split(' [')
+                            mandatory, parm_add = value.split(' [')
                         except Exception:
                             no_parm = True
-                            mendatory = value
-                        if len(mendatory.split(' ')) != 3:
-                            raise TypeError(f"{key} need 3 parm not"
-                                            f" {len(mendatory.split(' '))}"
-                                            " if you want more parm do "
+                            mandatory = value
+                        if len(mandatory.split(' ')) != 3:
+                            raise TypeError(f"{key} need 3 parmeter not"
+                                            f" {len(mandatory.split(' '))}"
+                                            " if you want more parmeter do "
                                             "this [color=green ...]")
-                        mendatory_splited = mendatory.split(' ')
-                        name_start, x_str, y_str = mendatory_splited
+                        mandatory_splited = mandatory.split(' ')
+                        name_start, x_str, y_str = mandatory_splited
                         x_start = int(x_str)
                         y_start = int(y_str)
                         dico_start: Dict[str, Any] = {
@@ -150,17 +150,17 @@ def parcing(content: str) -> Dict[str, Any]:
                     if dico['end'] == {}:
                         no_parm = False
                         try:
-                            mendatory, parm_add = value.split(' [')
+                            mandatory, parm_add = value.split(' [')
                         except Exception:
                             no_parm = True
-                            mendatory = value
-                        if len(mendatory.split(' ')) != 3:
-                            raise TypeError(f"{key} need 3 parm not "
-                                            f"{len(mendatory.split(' '))}"
-                                            " if you want more parm do"
+                            mandatory = value
+                        if len(mandatory.split(' ')) != 3:
+                            raise TypeError(f"{key} need 3 parmete not "
+                                            f"{len(mandatory.split(' '))}"
+                                            " if you want more parmete do"
                                             "this [color=green ...]")
-                        mendatory_splited = mendatory.split(' ')
-                        name_end, x_str, y_str = mendatory_splited
+                        mandatory_splited = mandatory.split(' ')
+                        name_end, x_str, y_str = mandatory_splited
                         x_end = int(x_str)
                         y_end = int(y_str)
                         dico_end: Dict[str, Any] = {
@@ -229,17 +229,17 @@ def parcing(content: str) -> Dict[str, Any]:
                 elif key == "hub":
                     no_parm = False
                     try:
-                        mendatory, parm_add = value.split(' [')
+                        mandatory, parm_add = value.split(' [')
                     except Exception:
                         no_parm = True
-                        mendatory = value
-                    if len(mendatory.split(' ')) != 3:
-                        raise TypeError(f"{key} need 3 parm not "
-                                        f"{len(mendatory.split(' '))} if"
-                                        " you want more parm do "
+                        mandatory = value
+                    if len(mandatory.split(' ')) != 3:
+                        raise TypeError(f"{key} need 3 parmete not "
+                                        f"{len(mandatory.split(' '))} if"
+                                        " you want more parmete do "
                                         "this [color=green ...]")
-                    mendatory_splited = mendatory.split(' ')
-                    name_hub, x_str, y_str = mendatory_splited
+                    mandatory_splited = mandatory.split(' ')
+                    name_hub, x_str, y_str = mandatory_splited
                     x_hub = int(x_str)
                     y_hub = int(y_str)
                     dico_hub_hub: Dict[str, Any] = {"x": x_hub, "y": y_hub}
@@ -299,21 +299,21 @@ def parcing(content: str) -> Dict[str, Any]:
                     dico["hub"][name_hub] = dico_hub_hub
 
                 elif key == "connection":
-                    mendatory_conn = value.split(' [')
-                    if len(mendatory_conn[0].split(' ')) != 1:
+                    mandatory_conn = value.split(' [')
+                    if len(mandatory_conn[0].split(' ')) != 1:
                         raise TypeError(f"{key} need 1 parm not "
                                         f"{
-                                        len(mendatory_conn[0].split(' '))
+                                        len(mandatory_conn[0].split(' '))
                                             }"
                                         " if you want more parmeter do "
                                         "this [max_link_capacity=2 ...]")
-                    mendatory_splited = mendatory_conn[0].split(' ')
-                    name = mendatory_splited[0]
+                    mandatory_splited = mandatory_conn[0].split(' ')
+                    name = mandatory_splited[0]
                     name_hub1, name_hub2 = name.split('-')
                     dico_link = {"hub1": name_hub1, "hub2": name_hub2}
                     dico_link_invers = {"hub1": name_hub2, "hub2": name_hub1}
-                    if len(mendatory_conn) == 2:
-                        parm_add, after = mendatory_conn[1].split(']')
+                    if len(mandatory_conn) == 2:
+                        parm_add, after = mandatory_conn[1].split(']')
                         if after != '':
                             raise Exception()
                         parm = parm_add.split(' ')
@@ -400,7 +400,7 @@ def test_dico(dico: Dict[str, Any]) -> None:
         raise ValueError('The programe need end_hub')
     if int(dico['start'].get('max_drones',
                              dico['nb_drones'])) < dico['nb_drones']:
-        raise ValueError('Start max_drone need to be bigger or egal')
+        raise ValueError('Start max_drone need to be bigger or egal to nb_drones')
     if int(dico['end'].get('max_drones',
                            dico['nb_drones'])) < dico['nb_drones']:
-        raise ValueError('End max_drone need to be bigger or egal')
+        raise ValueError('End max_drone need to be bigger or egal to nb_drones')
