@@ -112,8 +112,8 @@ class Map:
                     self.dico['hub'][name_hub]['x'],
                     self.dico['hub'][name_hub]['y'],
                     self.dico['hub'][name_hub].get('zone', 'normal'),
-                    self.dico['hub'][name_hub].get('max_drones',
-                                                   self.dico['nb_drones'])
+                    int(self.dico['hub'][name_hub].get('max_drones',
+                                                       self.dico['nb_drones']))
                 )
             else:
                 hub = Hub(
@@ -121,14 +121,15 @@ class Map:
                     self.dico['hub'][name_hub]['x'],
                     self.dico['hub'][name_hub]['y'],
                     self.dico['hub'][name_hub].get('zone', 'normal'),
-                    self.dico['hub'][name_hub].get('max_drones', 1)
+                    int(self.dico['hub'][name_hub].get('max_drones',
+                                                       1))
 
                 )
             self.lst_hub.append(hub)
         for hub in self.lst_hub:
             for element in link:
                 if element['hub2'] == hub.name:
-                    max_size = int(element.get("max_size", 1))
+                    max_size = int(element.get("max_link_capacity", 1))
                     for hub2 in self.lst_hub:
                         if hub2.name == element['hub1']:
                             link_in = False
@@ -140,7 +141,6 @@ class Map:
         for hub in self.lst_hub:
             for element in link:
                 if element['hub2'] == hub.name:
-                    max_size = int(element.get("max_size", 1))
                     for hub2 in self.lst_hub:
                         if hub2.name == element['hub1']:
                             for links in self.lst_link:
@@ -181,9 +181,7 @@ class Map:
                     hn = link.hub1
                     if hs.name == self.start_name and not hs.max_size:
                         ship.hub_solve = hs
-                        ship.hub_next = hn
-                        ship.lst_solve.append((ship.hub_solve.x,
-                                               ship.hub_solve.y))
+                        ship.hub_next = hs
             while self.finish_solve:
                 for ship in self.lst_ship:
                     if ship.stuck:

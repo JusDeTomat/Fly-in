@@ -400,7 +400,9 @@ def test_dico(dico: Dict[str, Any]) -> None:
         raise ValueError('The programe need end_hub')
     if int(dico['start'].get('max_drones',
                              dico['nb_drones'])) < dico['nb_drones']:
-        raise ValueError('Start max_drone need to be bigger or egal to nb_drones')
+        raise ValueError('Start max_drone need to be bigger '
+                         'or egal to nb_drones')
     if int(dico['end'].get('max_drones',
                            dico['nb_drones'])) < dico['nb_drones']:
-        raise ValueError('End max_drone need to be bigger or egal to nb_drones')
+        raise ValueError('End max_drone need to be bigger or egal '
+                         'to nb_drones')
