@@ -51,4 +51,4 @@ To enhance the user experience and make algorithmic behaviors transparent, the p
 
 * Libraries: The visualization relies entirely on Pyray (Python bindings for Raylib).
 
-* AI Usage: Artificial Intelligence was use for do the README.
+* AI Usage: Artificial Intelligence was use to do the README.
