@@ -12,13 +12,16 @@ def write_output(filename: str, lst_output: List[List[Any]]) -> None:
         ValueError: If file cannot be written or checked.
     """
     try:
+        line_nb = 0
         check_filename(filename)
         with open(filename, "w") as file:
             for i in range(len(lst_output[0])):
                 for line in lst_output:
                     if line[i] is not None:
                         file.write(f"{line[i]} ")
-                file.write("\n")
+                if line_nb != 0:
+                    file.write("\n")
+                line_nb += 1
     except Exception as e:
         raise ValueError(e)
 
